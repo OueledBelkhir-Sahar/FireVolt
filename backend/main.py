@@ -1,16 +1,64 @@
-# This is a sample Python script.
+"""
+Point d'entrée principal de l'API FireVolt.
+Lancement : cd backend ; python -m uvicorn main:app --reload
+"""
+from contextlib import asynccontextmanager
 
-# Press Maj+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from database import Base, SessionLocal, engine
+from models import User
+from routers import auth, detections, locaux, stats, users
+from security import hash_pw
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+@asynccontextmanager
+async def demarrage(app: FastAPI):
+    """
+    S'exécute automatiquement au lancement de l'application :
+    1. Crée les tables dans app.db si elles n'existent pas encore.
+    2. Crée le premier compte administrateur par défaut s'il n'existe pas.
+    """
+    Base.metadata.create_all(engine)
+    db = SessionLocal()
+
+    # Création automatique de l'admin principal si la base est neuve
+    if not db.query(User).filter(User.role == "admin").first():
+        admin = User(
+            nom="admin",
+            email="admin@poste.tn",
+            telephone="",
+            region="Tunis",
+            password=hash_pw("admin123"),
+            role="admin",
+        )
+        db.add(admin)
+        db.flush()
+        admin.admin_id = admin.id  # L'admin est son propre propriétaire
+        db.commit()
+        print(" Compte administrateur créé : admin@poste.tn / admin123")
+
+    db.close()
+    yield
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+# Initialisation de l'application FastAPI
+app = FastAPI(title="FireVolt API", version="1.0.0", lifespan=demarrage)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# Configuration CORS (permet au frontend Angular de communiquer avec l'API)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:4200", "http://127.0.0.1:4200"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Inclusion de tous nos routeurs modulaires
+app.include_router(auth.router)
+app.include_router(users.superviseurs_router)
+app.include_router(users.techniciens_router)
+app.include_router(locaux.router)
+app.include_router(detections.router)
+app.include_router(stats.router)
