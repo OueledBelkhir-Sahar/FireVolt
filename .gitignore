@@ -1,0 +1,18 @@
+# Environnement virtuel Python
+.venv/
+venv/
+env/
+
+# Cache Python
+__pycache__/
+*.py[cod]
+
+# Base de données locale
+*.db
+app.db
+
+# Configuration PyCharm
+.idea/
+
+# Variables d'environnement secrètes (si vous en ajoutez)
+.env
