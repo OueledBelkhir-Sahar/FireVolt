@@ -1,0 +1,52 @@
+    <nz-modal [(nzVisible)]="isVisibleS"
+      nzTitle="{{superviseur.id ? 'Modifier' : 'Ajouter'}} un superviseur"
+      (nzOnCancel)="handleCancel()"
+      (nzOnOk)="handleOk()"
+              [nzOkDisabled]="!superviseurForm.valid"
+      nzOkText="{{superviseur.id ? 'Modifier' : 'Ajouter'}}"
+      nzCancelText="Annuler">
+
+      <ng-container *nzModalContent>
+
+        <form nz-form [formGroup]="superviseurForm" >
+          <nz-form-item>
+            <nz-form-label [nzSpan]="7" nzRequired>Nom</nz-form-label>
+            <nz-form-control [nzSpan]="12">
+              <input nz-input formControlName="name" placeholder="Nom" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label [nzSpan]="7" nzRequired>Téléphone</nz-form-label>
+            <nz-form-control [nzSpan]="12">
+              <input nz-input formControlName="phone" placeholder="Téléphone" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label [nzSpan]="7" nzRequired>E-mail</nz-form-label>
+            <nz-form-control [nzSpan]="12">
+              <input nz-input formControlName="email" placeholder="E-mail" type="email" autocomplete="off"/>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label [nzSpan]="7" nzRequired>Mot de passe</nz-form-label>
+            <nz-form-control [nzSpan]="12" nzDisableAutoTips nzErrorTip="Please input your password!">
+              <input nz-input type="password" formControlName="password" placeholder="password"  autocomplete="new-password"/>
+            </nz-form-control>
+          </nz-form-item>
+
+
+          <nz-form-item>
+            <nz-form-label [nzSpan]="7" nzRequired> Region </nz-form-label>
+            <nz-form-control [nzSpan]="12">
+              <input nz-input formControlName="region" placeholder="Region" />
+            </nz-form-control>
+          </nz-form-item>
+
+
+        </form>
+      </ng-container>
+    </nz-modal>
+

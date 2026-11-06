@@ -1,0 +1,12 @@
+
+.sidebar-open {
+  margin-left: 250px;  // Si la sidebar est ouverte, déplace le contenu vers la droite
+}
+
+.sidebar-closed {
+  margin-left: 0;  // Si la sidebar est fermée, le contenu prend toute la largeur
+}
+
+.card {
+  transition: margin-left 0.3s ease;  // Pour animer la transition entre ouvert/fermé
+}

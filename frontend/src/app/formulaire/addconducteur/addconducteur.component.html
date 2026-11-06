@@ -1,0 +1,54 @@
+<nz-modal [(nzVisible)]="isVisibleC"
+nzTitle="{{driver.id ? 'Modifier' : 'Ajouter'}} un conducteur"
+(nzOnCancel)="handleCancel()"
+(nzOnOk)="handleOk()"
+          [nzOkDisabled]="!conducteurForm.valid"
+nzOkText="{{driver.id ? 'Modifier' : 'Ajouter'}}"
+nzCancelText="Annuler">
+
+  <ng-container *nzModalContent>
+    <!--formulaire-->
+    <form nz-form  [formGroup]="conducteurForm" >
+
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>Nom</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzValidatingTip="Validating...">
+          <input nz-input formControlName="name" placeholder="Username" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>E-mail</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzDisableAutoTips nzErrorTip="Please input your email!">
+          <input nz-input formControlName="email" placeholder="email" type="email" autocomplete="off" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>Mot de passe</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzDisableAutoTips nzErrorTip="Please input your password!">
+          <input nz-input type="password" formControlName="password" placeholder="password"  autocomplete="new-password" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>Téléphone</nz-form-label>
+        <nz-form-control [nzSpan]="12">
+          <input nz-input formControlName="phone" placeholder="Mobile" />
+        </nz-form-control>
+      </nz-form-item>
+
+
+
+
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>Region</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzValidatingTip="Validating...">
+          <input nz-input formControlName="region" placeholder="Region" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

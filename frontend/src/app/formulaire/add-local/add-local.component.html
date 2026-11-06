@@ -1,0 +1,46 @@
+<nz-modal [(nzVisible)]="isVisibleV"
+nzTitle="{{device.id ? 'Modifier' : 'Ajouter'}} un appareil"
+(nzOnCancel)="handleCancel()"
+(nzOnOk)="handleOk()"
+          [nzOkDisabled]="VehiculForm.invalid"
+nzOkText="{{device.id ? 'Modifier' : 'Ajouter'}}"
+nzCancelText="Annuler">
+
+<ng-container *nzModalContent>
+  <!--formulaire-->
+  <form nz-form  [formGroup]="VehiculForm" >
+    <nz-form-item>
+      <nz-form-label [nzSpan]="7"  nzRequired >Identifiant</nz-form-label>
+      <nz-form-control [nzSpan]="12" [nzErrorTip]="'Identifiant requis'"   nzValidatingTip="Validating...">
+        <input nz-input formControlName="uniqueId" placeholder="Identifiant" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="7" nzRequired>Modéle</nz-form-label>
+      <nz-form-control [nzSpan]="12">
+        <input nz-input formControlName="name" placeholder="Modéle" />
+      </nz-form-control>
+    </nz-form-item>
+
+
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="7" >Limite de vitesse  </nz-form-label>
+      <nz-form-control [nzSpan]="12">
+        <input nz-input formControlName="speedLimit" placeholder="Limite de vitesse (km/h)" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="7" >Region</nz-form-label>
+      <nz-form-control [nzSpan]="12">
+        <input nz-input formControlName="region" placeholder="Region" />
+      </nz-form-control>
+    </nz-form-item>
+
+
+  </form>
+</ng-container>
+</nz-modal>
+

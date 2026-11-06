@@ -1,0 +1,103 @@
+<div style="background: #ECECEC; padding:30px;" *ngIf="authentificationsService.getUser()?.administrator">
+  <div nz-row [nzGutter]="8">
+
+    <div nz-col [nzSpan]="8">
+      <nz-card nzTitle="Superviseurs" class="dashboard-card center-content" >
+        <p>Total : {{ supervisorCount }}</p>
+      </nz-card>
+    </div>
+
+    <div nz-col [nzSpan]="8">
+      <nz-card nzTitle="Technicien" class="dashboard-card">
+        <p>Total : {{ driverCount }}</p>
+      </nz-card>
+    </div>
+
+    <div nz-col [nzSpan]="8">
+      <nz-card nzTitle="Local électrique " class="dashboard-card">
+        <p>Total : {{ deviceCount }}</p>
+      </nz-card>
+    </div>
+
+  </div>
+
+  </div>
+
+
+
+<div style="margin-top: 11px"  *ngIf="authentificationsService.getUser()?.administrator || authentificationsService.getUser()?.supervisor ">
+
+  <div class="row">
+    <div class="col-3">
+      <p>  <a (click)="onClickInstaller()"> Appareils Installés  : </a>
+        <a nz-dropdown [nzDropdownMenu]="menu">
+          {{ installedDevice.length }}
+          <nz-icon nzType="down" />
+        </a></p>
+
+    </div>
+    <div class="col-3">
+
+      <nz-dropdown-menu #menu="nzDropdownMenu">
+        <ul nz-menu nzSelectable>
+
+          <li nz-menu-item *ngFor="let device of installedDevice" (click)="onDeviceSelected(device)">
+            {{ device.device.uniqueId }}, {{ device.device.name }}
+          </li>
+
+        </ul>
+      </nz-dropdown-menu>
+
+    </div>
+
+    <div class="col-3" *ngIf="Visible && authentificationsService.getUser()?.administrator " >
+      <a (click)="markZone()">Marquer une zone geofence</a>
+    </div>
+    <div class="col-3" *ngIf="confVisible">
+      <a (click)="confirmZone()">confirmer</a>
+    </div>
+  </div>
+</div>
+
+
+<div>
+  <app-map-home
+
+    [showMarker]="MarkerVisible"
+    (mapReady)="map = $event"
+    [selectedDeviceId]="selectedDevice?.device?.id || null"
+    [resetMapView]="reinitialiserMap"
+    (mapMarkerLocEvent)="updateMarkerLoc($event)"
+    (mapResetDone)="reinitialiserMap = false"
+    (IconClicked)="onMarkerClicked($event)">
+  </app-map-home>
+
+  <app-geofence *ngIf= " geofenceDrawerVisible && map"
+
+    #geoComp
+
+    [map]="map"
+    [visible]="geofenceDrawerVisible"
+    [markerLngLat]="markerLngLat"
+    [device]="selectedDevice?.device || null"
+    [formDirectVisible]="geofenceFormDirectVisible"
+    (closeDrawer)="geofenceDrawerVisible = false"
+    (addGeofence)="geofenceDrawerVisible=false"
+  >
+  </app-geofence>
+
+
+  <app-device-modal
+    *ngIf="mapEnrichedSelectedDevice?.device && mapEnrichedSelectedDevice?.position"
+
+    [Modalvisible]="modalVisible"
+    [device]="mapEnrichedSelectedDevice.device"
+    [position]="mapEnrichedSelectedDevice.position"
+    (close)="handleCancel()"
+    (openGeofence)="handleOpenGeofence()"
+  >
+  </app-device-modal>
+
+
+
+</div>

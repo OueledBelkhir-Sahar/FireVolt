@@ -1,0 +1,77 @@
+.login-container {
+  display: flex;
+  height: 100vh;
+}
+
+.login-left {
+  width: 50%;
+  flex: 1;
+  background: linear-gradient(135deg, rgba(11, 31, 75, 0.88), rgba(10, 77, 168, 0.70)),
+  url('/assets/Logo_fireVolt.png') center / cover no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login-left img {
+  width: 300px;
+  border-radius: 50%;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+}
+.logo {
+  width: 250px;
+}
+.login-right {
+  flex: 1;
+  padding: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: white;
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+
+.login-form {
+  width: 100%;
+  max-width: 400px;
+}
+
+label {
+  font-size: 14px;
+  margin-bottom: 5px;
+  display: block;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  width: 100%;
+  padding: 20px;
+  background-color:  rgba(10, 77, 168, 0.70);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #fdc613;
+}
+
+/* Message d'erreur */
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 10px;
+}
+

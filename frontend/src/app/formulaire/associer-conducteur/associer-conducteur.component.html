@@ -1,0 +1,30 @@
+<nz-modal
+  [nzVisible]="isVisibleLink"
+  [nzClosable]="true"
+  [nzMaskClosable]="false"
+  [nzOkLoading]="step === 2 ? false : false"
+[nzFooter]="null"
+(nzOnCancel)="handleCancel()"
+nzTitle="Associer"
+>
+
+<ng-container *nzModalContent>
+  <p> {{ step === 1 ? 'Associer à un conducteur' : 'Associer à un superviseur' }}</p>
+
+  <nz-radio-group  [(ngModel)]="selectedUserId">
+      <div *ngFor="let user of utilisateursAffiches">
+
+              <label nz-radio [nzValue]="user.id">
+          {{ user.attributes.region }}: {{ user.name }}, {{ user.phone }}
+        </label>
+      </div>
+    </nz-radio-group>
+
+  <div class="footer-buttons" style="margin-top: 20px;  margin-left: 20px ;margin-right: 20px; text-align: right">
+    <button nz-button (click)="handleCancel()">Annuler</button>
+    <button nz-button nzType="primary" style=" margin-left: 10px;" (click)="handleOk()">
+      {{ step === 1 ? 'Next' : 'Terminer' }}
+    </button>
+  </div>
+  </ng-container>
+</nz-modal>

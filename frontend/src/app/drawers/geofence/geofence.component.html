@@ -1,0 +1,79 @@
+<nz-drawer
+  [nzVisible]="visible"
+  nzPlacement="right"
+  nzTitle="Zone Geofence"
+  (nzOnClose)="close()"
+>
+  <ng-container *nzDrawerContent>
+    <div *ngIf="formDirectVisible">
+
+       <div *ngIf="FormVisible">
+      <form nz-form [formGroup]="validateForm" (ngSubmit)="AjouterForm()">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="5" nzRequired nzFor="nom">Nom</nz-form-label>
+          <nz-form-control [nzSpan]="12"  nzErrorTip="Ajouter Nom du zone">
+            <input id="nom" type="text" nz-input formControlName="nom"  />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="5" nzFor="type" nzRequired>Type</nz-form-label>
+          <nz-form-control [nzSpan]="12" nzErrorTip="Ajouter le type du zone">
+            <nz-select id="type" formControlName="type" nzPlaceHolder="Type de zone">
+              <nz-option nzValue="Zone identifié" nzLabel="Zone identifié"></nz-option>
+              <nz-option nzValue="Zone autorisé" nzLabel="Zone autorisé"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="5" nzFor="radius" nzRequired>Rayon </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzErrorTip="Ajouter un rayon pour la zone">
+            <input id="radius" type="number" nz-input formControlName="radius" min="1" nzPlaceHolder="en mètres" />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-control [nzSpan]="12" [nzOffset]="5">
+            <button nz-button nzType="primary" >Ajouter</button>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </div>
+
+    </div>
+    <div *ngIf="geofences.length > 0; else noGeofences" style="margin-top: 24px;">
+      <ul style="list-style: none; padding: 0;">
+        <li *ngFor="let geofence of geofences; trackBy: trackByGeofenceId"
+            style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
+    <span>
+      <strong>{{ geofence.name }}</strong> - {{ geofence.description }}
+    </span>
+
+          <button
+            nz-button
+            nzType="text"
+            nz-popconfirm
+            nzPopconfirmTitle="Voulez-vous vraiment supprimer cette zone ?"
+            nzPopconfirmPlacement="left"
+            (nzOnConfirm)="deleteGeofence(geofence.id)">
+            <nz-icon nzType="delete" nzTheme="outline" style="color: red;"></nz-icon>
+          </button>
+
+
+        </li>
+      </ul>
+
+    </div>
+
+
+
+    <ng-template #noGeofences>
+      <p>Aucune zone geofence trouvée pour ce véhicule.</p>
+    </ng-template>
+
+  </ng-container>
+</nz-drawer>
+
+
+

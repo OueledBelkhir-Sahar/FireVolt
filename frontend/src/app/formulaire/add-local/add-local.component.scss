@@ -1,0 +1,41 @@
+/*.container {
+  max-width: 400px;
+  margin-bottom: 100px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: #f9f9f9;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color:black;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+#btnsubmit[disabled] {
+  background-color:red;
+}
+
+button:hover {
+  background-color: #5ba3f8;
+}
+*/
+input {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}

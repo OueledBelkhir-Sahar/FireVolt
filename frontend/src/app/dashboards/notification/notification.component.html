@@ -1,0 +1,60 @@
+<div class=" d-flex justify-content-between">
+  <h3>Liste des Notifications</h3>
+  <button nz-button nzType="dashed" (click)="toggleForm()">Ajouter</button>
+  <br/><br/>
+</div>
+
+<nz-table #nzTable [nzData]="listOfDisplayData" nzTableLayout="fixed">
+  <thead>
+  <tr>
+    <th nzCustomFilter>
+      Type
+      <nz-filter-trigger [(nzVisible)]="visibleSearch" [nzActive]="searchType.length > 0" [nzDropdownMenu]="menu">
+        <nz-icon nzType="search"/>
+      </nz-filter-trigger>
+    </th>
+    <th>Description</th>
+    <th nzCellControl="action">Action</th>
+  </tr>
+  </thead>
+  <tbody>
+    @for (data of nzTable.data; track data.id) {
+      <tr>
+        <td>{{ typeLabelMap[data.type] || data.type }}</td>
+        <td>{{ data.description }}</td>
+        <td nzCellControl="action">
+          <button
+            nz-button
+            nz-popconfirm
+            nzPopconfirmTitle="Voulez vous vraiment supprimer ?"
+            nzPopconfirmPlacement="bottom"
+            nzType="dashed"
+            (nzOnConfirm)="deleteNotification(data)"
+            >
+            Supprimer
+          </button>
+          <nz-divider nzType="vertical"></nz-divider>
+      </tr>
+    }
+  </tbody>
+</nz-table>
+<nz-dropdown-menu #menu="nzDropdownMenu">
+  <div class="ant-table-filter-dropdown">
+    <div class="search-box">
+      <input type="text" nz-input placeholder="Search car registration number" [(ngModel)]="searchType"/>
+      <button nz-button nzSize="small" nzType="primary" (click)="search()" class="search-button">Search</button>
+      <button nz-button nzSize="small" (click)="reset()">Reset</button>
+    </div>
+  </div>
+</nz-dropdown-menu>
+
+<div *ngIf="showForm">
+
+  <app-add-notification
+    [isVisibleF]="showForm"
+    [notif]="selectedNotification"
+    (addEvent)="loadNotif(); showForm=false "
+    (cancelEvent)="showForm = false">
+  </app-add-notification>
+
+</div>
