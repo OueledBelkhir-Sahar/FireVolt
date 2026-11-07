@@ -1,18 +1,15 @@
-# Environnement virtuel Python
+# Python
 .venv/
-venv/
-env/
-
-# Cache Python
 __pycache__/
-*.py[cod]
-
-# Base de données locale
+*.pyc
 *.db
-app.db
-
-# Configuration PyCharm
-.idea/
-
-# Variables d'environnement secrètes (si vous en ajoutez)
 .env
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+
+# IDE
+.idea/
+.vscode/
