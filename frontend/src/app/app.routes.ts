@@ -15,6 +15,8 @@ export const routes: Routes = [
         canActivate: [adminGuard],
         loadComponent: () => import('./pages/supervisors.component').then((m) => m.SupervisorsComponent),
       },
+      { path: 'locals', loadComponent: () => import('./pages/locals.component').then((m) => m.LocalsComponent) },
+      { path: 'locals/:id/history', loadComponent: () => import('./pages/history.component').then((m) => m.HistoryComponent) },
     ],
   },
   { path: '**', redirectTo: '' },
