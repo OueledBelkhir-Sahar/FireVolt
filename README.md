@@ -201,5 +201,5 @@ curl -X POST http://localhost:8082/api/detections \
 
 ## Crédits et licences
 
-Les jeux de données d'entraînement proviennent de [Roboflow Universe](https://universe.roboflow.com/) (*Fire-Smoke-Spark* par ZETA et *Spark Detector*), publiés sous licence **CC BY 4.0** : toute réutilisation doit en citer les auteurs.
+Les jeux de données d'entraînement proviennent de [https://universe.roboflow.com/fahads-workspace-0gh18/spark-detector-pcnjm/browse?queryText=&pageSize=100&startingIndex=0&browseQuery=true](https://universe.roboflow.com/) ( *Spark Detector*), publiés sous licence **CC BY 4.0** : toute réutilisation doit en citer l'auteur.
 
