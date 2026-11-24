@@ -1,9 +1,16 @@
-# 🔥 FireVolt
+<p align="center">
+  <img src="docs/logo.png" alt="Logo FireVolt" width="160">
+</p>
 
-**Surveillance intelligente et détection précoce d'incendie dans les locaux électriques.**
+<h1 align="center">FireVolt</h1>
+
+<p align="center">
+  <strong>Surveillance intelligente et détection précoce d'incendie dans les locaux électriques.</strong>
+</p>
 
 FireVolt analyse en temps réel le flux de caméras installées dans des locaux électriques (postes de distribution, locaux techniques) et détecte trois situations dangereuses : **feu**, **fumée** et **étincelles**. Dès qu'une détection est confirmée, l'alerte est diffusée instantanément aux superviseurs concernés via une application web.
 
+**Sommaire** : [Contexte](#contexte) · [Fonctionnalités](#fonctionnalités) · [Architecture](#architecture) · [Moteur IA](#moteur-ia) · [Structure du dépôt](#structure-du-dépôt) · [Installation](#installation) · [Configuration](#configuration) · [API](#api) · [Sécurité](#sécurité) · [Documentation](#documentation) · [Crédits et licences](#crédits-et-licences)
 
 ---
 
@@ -55,7 +62,6 @@ Les capteurs classiques (fumée, chaleur) réagissent tard : ils dépendent de l
 | Frontend | Angular 19 (composants standalone, signaux), Leaflet, FontAwesome |
 | Authentification | session par cookie signé (`JSESSIONID`), mots de passe PBKDF2-SHA256 |
 
-
 ## Moteur IA
 
 - Modèle : **YOLO26s**, entraîné pendant 100 époques (`imgsz=800`, `patience=20`) sur le jeu de données *spark_detector* (3 classes : feu, fumée, étincelle).
@@ -65,6 +71,12 @@ Les capteurs classiques (fumée, chaleur) réagissent tard : ils dépendent de l
 | Courbe F1 | Courbe précision-rappel | Matrice de confusion |
 |---|---|---|
 | ![F1](results/BoxF1_curve.png) | ![PR](results/BoxPR_curve.png) | ![Confusion](results/confusion_matrix_normalized.png) |
+
+| Courbe de précision | Courbe de rappel | Évolution de l'entraînement |
+|---|---|---|
+| ![Précision](results/BoxP_curve.png) | ![Rappel](results/BoxR_curve.png) | ![Résultats](results/results.png) |
+
+La répartition des classes du jeu de données est visible dans [`results/labels.jpg`](results/labels.jpg).
 
 ### Logique de décision
 
@@ -97,7 +109,8 @@ FireVolt/
 │  │  └─ shared/        carte, sélecteur de position, fenêtre de flux
 │  └─ proxy.conf.json
 ├─ weights/             modèle entraîné (best.pt)
-└─ results/             courbes et résultats d'entraînement
+├─ results/             courbes et résultats d'entraînement
+└─ docs/                logo, présentation et rapport académique
 ```
 
 ## Installation
@@ -120,7 +133,7 @@ Documentation interactive de l'API : http://localhost:8082/docs
 *Option GPU (Windows, CUDA 12.6) :*
 `pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126 --force-reinstall`
 
-Le serveur doit être lancé **depuis le dossier `backend`** (chemins relatifs vers la base et vers `../weights/best.pt`).
+Le serveur doit être lancé **depuis le dossier `backend`** (chemins relatifs vers la base et vers `../weights/best.pt`). La base SQLite `firevolt.db` est créée automatiquement au premier démarrage.
 
 ### 2. Frontend
 
@@ -151,7 +164,7 @@ Créés au premier démarrage (3 locaux de démonstration à Tunis, Bizerte et S
 | Administrateur | `admin@firevolt.tn` | `admin123` |
 | Superviseur (Tunis, Bizerte) | `sup@firevolt.tn` | `sup123` |
 
-⚠️ **À changer avant tout déploiement** (voir *Configuration*).
+⚠️ **À changer avant tout déploiement** (voir [Configuration](#configuration)).
 
 ## Configuration
 
@@ -198,8 +211,18 @@ curl -X POST http://localhost:8082/api/detections \
 - Contrôle d'accès **côté serveur** : un superviseur n'accède qu'aux locaux de ses régions (404 sinon) et ne peut pas appeler les routes d'administration (403).
 - En production : définir `SECRET_KEY`, changer les comptes de démonstration, servir en HTTPS (`https_only=True` pour le cookie) et restreindre `CORS_ORIGINS`.
 
+## Documentation
+
+Les documents du projet se trouvent dans le dossier [`docs/`](docs/) :
+
+| Document | Fichier |
+|---|---|
+| Présentation du projet | [`Présentation_FireVolt_Finale.pdf`](docs/Pr%C3%A9sentation_FireVolt_Finale.pdf) |
+| Rapport académique | [`Rapport_FireVolt.pdf`](docs/Rapport_FireVolt.pdf) |
+| Logo | [`logo.png`](docs/logo.png) |
 
 ## Crédits et licences
 
-Les jeux de données d'entraînement proviennent de [https://universe.roboflow.com/fahads-workspace-0gh18/spark-detector-pcnjm/browse?queryText=&pageSize=100&startingIndex=0&browseQuery=true](https://universe.roboflow.com/) ( *Spark Detector*), publiés sous licence **CC BY 4.0** : toute réutilisation doit en citer l'auteur.
-
+- **Jeu de données** : [*Spark Detector*](https://universe.roboflow.com/fahads-workspace-0gh18/spark-detector-pcnjm) (Roboflow Universe), publié sous licence **CC BY 4.0** : toute réutilisation doit en citer l'auteur.
+- **Modèle** : [Ultralytics YOLO](https://github.com/ultralytics/ultralytics), distribué sous licence AGPL-3.0.
+- **Cartographie** : [Leaflet](https://leafletjs.com/) et données © les contributeurs [OpenStreetMap](https://www.openstreetmap.org/copyright).
