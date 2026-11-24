@@ -147,6 +147,33 @@ def set_status(device_id: int, status: str):
 
 
 # --------------------------------------------------------------------------- lecture caméra + YOLO
+class _LatestFrameReader(threading.Thread):
+    """Lit la caméra en continu et ne garde que la dernière image (pas de tampon => pas de retard)."""
+
+    def __init__(self, cap):
+        super().__init__(daemon=True)
+        self.cap = cap
+        self.lock = threading.Lock()
+        self.frame = None
+        self.fid = 0
+        self.alive = True
+        self.stop = False
+
+    def run(self):
+        while not self.stop:
+            ok, f = self.cap.read()
+            if not ok:
+                break
+            with self.lock:
+                self.frame = f
+                self.fid += 1
+        self.alive = False
+
+    def get(self):
+        with self.lock:
+            return self.fid, self.frame
+
+
 class CameraWorker(threading.Thread):
     def __init__(self, device_id: int, source: str, model):
         super().__init__(daemon=True, name=f"camera-{device_id}")
@@ -160,6 +187,17 @@ class CameraWorker(threading.Thread):
     def run(self):
         import cv2
 
+        # GPU + FP16 si CUDA est disponible, sinon CPU
+        predict_kw: dict = {}
+        try:
+            import torch
+
+            if torch.cuda.is_available():
+                predict_kw = {"device": 0, "half": True}
+        except Exception:
+            pass
+        log.info("local %s : inférence avec %s", self.device_id, predict_kw or "CPU")
+
         src = int(self.source) if self.source.isdigit() else self.source
         while not self.stop_evt.is_set():
             cap = cv2.VideoCapture(src)
@@ -168,16 +206,32 @@ class CameraWorker(threading.Thread):
                 cap.release()
                 self.stop_evt.wait(5)
                 continue
+            try:
+                cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+            except Exception:
+                pass
             set_status(self.device_id, "online")
-            while not self.stop_evt.is_set():
-                ok, frame = cap.read()
-                if not ok:
-                    break
+            reader = _LatestFrameReader(cap)
+            reader.start()
+            last_id = -1
+            t_log, n, t_inf, t_plot, t_enc = time.perf_counter(), 0, 0.0, 0.0, 0.0
+            while not self.stop_evt.is_set() and reader.alive:
+                fid, frame = reader.get()
+                if frame is None or fid == last_id:
+                    time.sleep(0.005)
+                    continue
+                skipped = fid - last_id - 1 if last_id >= 0 else 0
+                last_id = fid
                 out = frame
                 if self.model is not None:
                     try:
-                        res = self.model.predict(frame, imgsz=config.IMGSZ, conf=config.SUSPECT_CONF, verbose=False)[0]
+                        res = self.model.predict(
+                            frame, imgsz=config.IMGSZ, conf=config.SUSPECT_CONF, verbose=False, **predict_kw
+                        )[0]
+                        t_inf += res.speed["inference"]
+                        t0 = time.perf_counter()
                         out = res.plot()
+                        t_plot += (time.perf_counter() - t0) * 1000
                         best: dict[str, float] = {}
                         for b in res.boxes:
                             label = str(res.names[int(b.cls)]).lower()
@@ -186,10 +240,23 @@ class CameraWorker(threading.Thread):
                             handle_detection(self.device_id, label, conf)
                     except Exception as exc:  # ne jamais tuer le flux à cause d'une erreur d'inférence
                         log.warning("inférence %s : %s", self.device_id, exc)
+                t0 = time.perf_counter()
                 ok2, buf = cv2.imencode(".jpg", out, [cv2.IMWRITE_JPEG_QUALITY, 70])
+                t_enc += (time.perf_counter() - t0) * 1000
                 if ok2:
                     self.latest = buf.tobytes()
                     self.frame_id += 1
+                n += 1
+                now = time.perf_counter()
+                if now - t_log >= 5:  # mesure toutes les 5 s dans le terminal
+                    log.info(
+                        "local %s : %.1f img/s | inférence %.0f ms | tracé %.0f ms | JPEG %.0f ms | frame %dx%d",
+                        self.device_id, n / (now - t_log), t_inf / n, t_plot / n, t_enc / n,
+                        frame.shape[1], frame.shape[0],
+                    )
+                    t_log, n, t_inf, t_plot, t_enc = now, 0, 0.0, 0.0, 0.0
+            reader.stop = True
+            reader.join(timeout=2)
             cap.release()
             set_status(self.device_id, "offline")
             self.stop_evt.wait(2)
